@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Api Information</title>
+      <link rel="icon" type="image/jpg" href="https://iili.io/nnBtNig.jpg">
+      <meta property="og:description" content="Api gratis - no requiere token">
+      <meta property="og:image" content="https://iili.io/K030s44.jpg">
+      <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+   <style>
+      :root {
+         --primary: #000;
+         --secondary: #666;
+         --bg-card: #ffffff;
+         --border: #000;
+         --accent: #efdf0d;
+         --dot-pattern: radial-gradient(#d1d1d1 1px, transparent 1px);
+      }
+      body {
+         font-family: "Share Tech Mono", monospace;
+         margin: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         min-height: 100vh;
+         background-image: var(--dot-pattern);
+         background-size: 20px 20px;
+         color: var(--primary);
+         padding: 20px 0;
+      }
+      #main-container {
+         width: 90%;
+         max-width: 850px;
+         padding: 30px;
+         background-color: var(--bg-card);
+         background-image: var(--dot-pattern);
+         background-size: 15px 15px;
+         border: 2px solid var(--primary);
+         border-radius: 16px;
+         box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+      }
+      header {
+         text-align: center;
+         border-bottom: 2px solid var(--primary);
+         margin-bottom: 20px;
+         padding-bottom: 10px;
+      }
+      h1 {
+         font-size: 24px;
+         margin: 0;
+         text-transform: uppercase;
+      }
+      h3 {
+         font-size: 14px;
+         text-transform: uppercase;
+         margin: 0 0 15px 0;
+         border-left: 4px solid var(--primary);
+         padding-left: 10px;
+      }
+      .grid {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr);
+         gap: 20px;
+      }
+      .boxed {
+         border: 2px solid var(--primary);
+         padding: 15px;
+         background: rgba(255,255,255,0.9);
+         border-radius: 8px;
+      }
+      .full-width {
+         grid-column: span 2;
+      }
+      #endpoints-container {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         gap: 10px;
+         font-size: 12px;
+      }
+      .data-list {
+         font-size: 13px;
+      }
+      .data-row {
+         padding: 4px 0;
+         display: block;
+         border-bottom: 1px dashed #eee;
+      }
+      .data-row-library {
+         padding: 4px 0;
+         border-bottom: 1px dashed #eee;
+      }
+      b.label {
+         color: var(--secondary);
+         text-transform: uppercase;
+         font-size: 11px;
+         margin-right: 5px;
+      }
+      .footer {
+         margin-top: 20px;
+         text-align: center;
+         font-size: 10px;
+         color: var(--secondary);
+         border-top: 1px solid #ddd;
+         padding-top: 10px;
+      }
+      .dev-table {
+         width: 100%;
+         border-collapse: collapse;
+      }
+      .dev-table td {
+         padding: 8px 0;
+         vertical-align: middle;
+         border-bottom: 1px solid #eee;
+      }
+      .dev-table tr:last-child td {
+         border-bottom: none;
+      }
+      .ic {
+         width: 35px;
+         display: flex;
+         align-items: center;
+      }
+      .dev-info b {
+         display: block;
+         font-size: 12px;
+         color: var(--primary);
+      }
+      .dev-info small a {
+         color: var(--secondary);
+         text-decoration: none;
+         font-size: 11px;
+      }
+      @media (max-width: 768px) {
+         .grid {
+            grid-template-columns: 1fr;
+         }
+         .full-width {
+            grid-column: span 1;
+         }
+         #endpoints-container {
+            grid-template-columns: repeat(2, 1fr);
+         }
+      }
+      svg {
+         fill: var(--primary);
+         flex-shrink: 0;
+      }
+   </style>
+</head>
+<body>
+   <div id="main-container">
+      <header>
+         <h1 id="header">INFORMACIÓN - API GP</h1>
+         <div
+            style="font-size: 10px; color: var(--secondary);"
+            id="live-clock"
+         >
+            SISTEMA: ACTIVO | 00/00/0000 [00:00:00]
+         </div>
+      </header>
+      <div class="grid">
+         <div class="boxed">
+            <div class="stat-item">
+               <svg width="40" height="40" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+               </svg>
+               <div class="stat-info">
+                  <h2>SOLICITUDES</h2>
+                  <div class="count" id="requestCount">0</div>
+               </div>
+            </div>
+         </div>
+         <div class="boxed">
+            <div class="stat-item">
+               <svg width="40" height="40" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+               </svg>
+               <div class="stat-info">
+                  <h2>VISITANTES</h2>
+                  <div class="count" id="visitorCount">0</div>
+               </div>
+            </div>
+         </div>
+         <div class="boxed">
+            <h3>Sistema Interno</h3>
+            <div class="data-list">
+               <div class="data-row">
+                  <b class="label">PLT:</b>
+                  <span id="platform">Windows 11 25H2 (x64)</span>
+               </div>
+               <div class="data-row">
+                  <b class="label">RAM:</b>
+                  <span id="ram">5.4 GB / 32.05 GB (DDR5)</span>
+               </div>
+               <div class="data-row">
+                  <b class="label">CPU:</b>
+                  <span id="cpu">2.80% / 100% (AMD RYZEN 9 9950X3D)</span>
+               </div>
+               <div class="data-row">
+                  <b class="label">SSD:</b>
+                  <span id="ssd">89.23 GB / 970 GB (NVME)</span>
+               </div>
+               <div class="data-row">
+                  <b class="label">UPT:</b>
+                  <span id="runtime">03:03:03:03</span>
+               </div>
+            </div>
+         </div>
+         <div class="boxed">
+            <h3>CATEGORIAS DISPONIBLES</h3>
+            <div id="endpoints-container">
+               <div class="data-row-library">
+                  CARGANDO...
+               </div>
+            </div>
+         </div>
+         <div class="boxed full-width">
+            <h3>Especificaciones del procesador</h3>
+            <div
+               id="processor"
+               style="font-size: 12px; color: var(--secondary);"
+            >Arquitectura: Zen 5
+Socket: AM5
+Núcleos / Hilos: 16 núcleos y 32 hilos
+Frecuencia Base: 4.3 GHz
+Frecuencia Máxima (Boost): Hasta 5.7 GHz
+Caché L2: 16 MB
+Caché L3: 128 MB (Tecnología AMD 3D V-Cache de 2.ª generación)
+Caché Total: 144 MB
+TDP (Potencia Consumida): 170 W
+Gráficos Integrados: AMD Radeon Graphics
+Memoria Compatible: DDR5
+Compatibilidad PCI Express: PCIe 5.0</div>
+         </div>
+      </div>
+      <div class="footer">
+         © <span id="year">2026</span> | BY GP
+      </div>
+   </div>
+   <script>
+      function actualizarReloj() {
+         let ahora = new Date()
+         let dia = String(ahora.getDate()).padStart(2, '0')
+         let mes = String(ahora.getMonth() + 1).padStart(2, '0')
+         let año = ahora.getFullYear()
+         let horas = String(ahora.getHours()).padStart(2, '0')
+         let minutos = String(ahora.getMinutes()).padStart(2, '0')
+         let segundos = String(ahora.getSeconds()).padStart(2, '0')
+         document.getElementById('live-clock').textContent =
+            `SISTEMA: ACTIVO | ${dia}/${mes}/${año} [${horas}:${minutos}:${segundos}]`
+         document.getElementById('year').textContent = año
+      }
+      actualizarReloj()
+      setInterval(actualizarReloj, 1000)
+      async function cargarCategorias() {
+         let container = document.getElementById('endpoints-container')
+         try {
+            let res = await fetch('/api/', { cache: "no-store" })
+            if (!res.ok)
+               throw new Error('No se pudo acceder a /api/')
+            let html = await res.text()
+            let doc = new DOMParser().parseFromString(html, "text/html")
+            let archivos = [...doc.querySelectorAll("a[href]")]
+               .map(a => decodeURIComponent(a.getAttribute("href")))
+               .map(href => href.split("/").pop())
+               .filter(name => /^[^/]+-[^/]+\.js$/i.test(name));
+            let categorias = [...new Set(archivos.map(file => {
+               const name = file.replace(/\.js$/i, "");
+               const separator = name.indexOf("-");
+               return name.slice(0, separator).toUpperCase();
+            }))].sort();
+            if (!categorias.length) {
+               container.innerHTML = `
+                  <div class="data-row-library">
+                     NO HAY CATEGORÍAS DISPONIBLES
+                  </div>
+               `
+               return
+            }
+            container.innerHTML = categorias.map(categoria => `
+               <div class="data-row-library">
+                  <a href="/api/${categoria.toLowerCase()}" style="text-decoration:none; color:inherit; display:flex; justify-content:space-between; align-items:center;">
+                     <b class="label">${categoria}:</b>
+                     <span style="font-weight:bold;">IR ➔</span>
+                  </a>
+               </div>
+            `).join('')
+         } catch (error) {
+            console.error('Error cargando categorías:', error)
+            container.innerHTML = `
+               <div class="data-row-library">
+                  NO HAY CATEGORÍAS DISPONIBLES
+               </div>
+            `
+         }
+      }
+      cargarCategorias()
+   </script>
+</body>
+  </html>

@@ -1,0 +1,44 @@
+{
+  "name": "api-gp",
+  "version": "3.86",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "directories": {
+    "api": "api"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": {
+    "name": "noth"
+  },
+  "dependencies": {
+    "adm-zip": "*",
+    "api-dylux": "*",
+    "axios": "^1.1.2",
+    "chalk": "^6.0.0",
+    "cheerio": "npm:cheerio@1.0.0-rc.12",
+    "express": "^4.18.1",
+    "form-data": "^4.0.0",
+    "formdata-node": "^5.0.0",
+    "fs-extra": "^11.2.0",
+    "g-i-s": "^2.1.6",
+    "got-scraping": "*",
+    "impit": "^0.7.2",
+    "jimp": "^1.6.0",
+    "jsdom": "^20.0.1",
+    "node-fetch": "^3.2.10",
+    "puppeteer-core": "^22.6.0",
+    "ruhend-scraper": "*",
+    "ws": "^8.17.1",
+    "xbogus": "^1.0.2",
+    "youtube-dl-exec": "*",
+    "yt-search": "^2.10.3"
+  },
+  "optionalDependencies": {
+    "moment-timezone": "^0.5.45"
+  }
+}

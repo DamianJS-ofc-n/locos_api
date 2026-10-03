@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOCOS U ASOCIADOS API - Endpoints</title>
+    <link rel="icon" type="image/jpg" href="https://iili.io/nnBtNig.jpg">
+      <meta property="og:description" content="Api gratis - no requiere token">
+      <meta property="og:image" content="https://iili.io/K030s44.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000;
+            --secondary: #777;
+            --bg-card: #ffffff;
+            --border: #ececec;
+            --dot-color: #d1d1d1;
+            --dot-pattern: radial-gradient(var(--dot-color) 1px, transparent 1px);
+        }
+        body {
+            font-family: "Share Tech Mono", monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: var(--dot-pattern);
+            background-size: 20px 20px;
+            color: var(--primary);
+        }
+        #api-container {
+            width: 360px;
+            height: 550px;
+            padding: 25px;
+            background-color: var(--bg-card);
+            background-image: var(--dot-pattern);
+            background-size: 15px 15px;
+            border-radius: 16px;
+            border: 2px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
+        }
+        header { text-align: center; margin-bottom: 5px; }
+        #header { font-size: 26px; margin: 0; letter-spacing: 1px; text-transform: uppercase; }
+        #fetching { font-size: 10px; color: var(--secondary); text-transform: uppercase; margin-top: 4px; }
+        .description { font-size: 11px; margin: 10px 0 5px 0; color: var(--primary); line-height: 1.4; text-align: center; }
+        .search-area { display: flex; flex-direction: column; margin-bottom: 5px; }
+        .controls-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 5px;
+            border-bottom: 1px solid var(--border);
+        }
+        .left-controls { display: flex; gap: 15px; }
+        .icon-btn {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        #search-input-container { display: none; margin: 10px 0; }
+        #search-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid var(--primary);
+            background: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            padding: 6px 10px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        .table-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+            padding-right: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        #api-list {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .is-loading {
+            justify-content: center;
+            align-items: center;
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--dot-color);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .table-wrapper::-webkit-scrollbar { width: 4px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: var(--primary); }
+        .api-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.7);
+            margin-bottom: 4px;
+        }
+        .api-item:hover { background: var(--primary); color: #fff; }
+        .api-info { display: flex; flex-direction: column; max-width: 70%; }
+        .api-name { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+        .api-meta { font-size: 9px; color: var(--secondary); margin-top: 2px; }
+        .method { color: var(--primary); font-weight: bold; }
+        .api-item:hover .api-meta, .api-item:hover .method { color: #ccc; }
+        .btn-action {
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+            width: 55px;
+            height: 26px;
+            font-family: inherit;
+            font-size: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .api-item:hover .btn-action { background: #fff; color: var(--primary); }
+        .footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            font-size: 10px;
+            border-top: 2px solid var(--primary);
+            text-align: center;
+            color: var(--secondary);
+        }
+        .dot { height: 6px; width: 6px; background-color: var(--primary); display: inline-block; margin-right: 8px; vertical-align: middle; }
+        .api-item:hover .dot { background-color: #fff; }
+    </style>
+</head>
+<body>
+    <div id="api-container">
+        <header>
+            <div id="fetching">CATEGORIA</div>
+            <h1 id="header">ENDPOINTS</h1>
+        </header>
+        <div class="description">
+            Ejecuta las <b>solicitudes</b> haciendo clic en el botón RUN.
+        </div>
+        <div class="search-area">
+            <div class="controls-wrapper">
+                <div class="left-controls">
+                    <a href="/" class="icon-btn" title="Home">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </a>
+                </div>
+                <div id="search-trigger" class="icon-btn" title="Search">
+                    <svg id="icon-search" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <svg id="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+            </div>
+            <div id="search-input-container">
+                <input type="text" id="search-input" placeholder="BUSCAR ENDPOINTS..." autocomplete="off">
+            </div>
+        </div>
+        <div class="stats-bar">
+            <span>ESTADO: ONLINE</span>
+            <span id="endpoint-count">ENDPOINTS: 0</span>
+        </div>
+        <div class="table-wrapper">
+            <div id="api-list" class="is-loading">
+                <div class="spinner"></div>
+                <div style="font-size: 9px; margin-top: 12px; letter-spacing: 1.5px; color: var(--secondary);">CARGANDO...</div>
+            </div>
+        </div>
+        <div class="footer">
+            © <span id="year">2026</span> | <b>BY GP</b>
+        </div>
+    </div>
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        const categoryName = pathParts[1] ? pathParts[1].toUpperCase() : "ALL";
+        document.getElementById("header").textContent = categoryName;
+        const searchTrigger = document.getElementById("search-trigger");
+        const searchInputContainer = document.getElementById("search-input-container");
+        const iconSearch = document.getElementById("icon-search");
+        const iconClose = document.getElementById("icon-close");
+        const searchInput = document.getElementById("search-input");
+        searchTrigger.addEventListener("click", () => {
+            const isHidden = searchInputContainer.style.display === "none" || searchInputContainer.style.display === "";
+            if (isHidden) {
+                searchInputContainer.style.display = "block";
+                iconSearch.style.display = "none";
+                iconClose.style.display = "block";
+                searchInput.focus();
+            } else {
+                searchInputContainer.style.display = "none";
+                iconSearch.style.display = "block";
+                iconClose.style.display = "none";
+                searchInput.value = "";
+                renderEndpoints(window.currentEndpoints);
+            }
+        });
+        const MIN_LOADING_MS = 1500
+        async function getApiFiles() {
+            const res = await fetch("/api/", { cache: "no-store" });
+            if (!res.ok) throw new Error("No se pudo leer /api/");
+            const html = await res.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            return [...doc.querySelectorAll("a[href]")]
+                .map(a => decodeURIComponent(a.getAttribute("href")))
+                .map(href => href.split("/").pop())
+                .filter(name => /^[^/]+-[^/]+\.js$/i.test(name));
+        }
+        function parseApiFiles(files) {
+            return files.map(file => {
+                const name = file.replace(/\.js$/i, "");
+                const separator = name.indexOf("-");
+                if (separator < 1 || separator === name.length - 1) return null;
+                return {
+                    cat: name.slice(0, separator).toUpperCase(),
+                    name: name.slice(separator + 1).toUpperCase(),
+                    file,
+                    path: `/api/${file}` 
+                };
+            }).filter(Boolean);
+        }
+        async function getEndpointData(filePath) {
+            try {
+                const res = await fetch(filePath, { cache: "no-store" });
+                const code = await res.text();
+                const matchPrm = code.match(/(?:const|let|var|export\s+const)\s+prm\s*=\s*['"]([^'"]+)['"]/);
+                const matchUdf = code.match(/(?:const|let|var|export\s+const)\s+udf\s*=\s*['"]([^'"]+)['"]/);
+                return {
+                    param: matchPrm ? matchPrm[1] : 'query',
+                    defaultVal: matchUdf ? matchUdf[1] : ''
+                };
+            } catch (err) {
+                return { param: 'query', defaultVal: '' };
+            }
+        }
+        async function loadEndpoints() {
+            const started = Date.now();
+            try {
+                const files = await getApiFiles();
+                let endpoints = parseApiFiles(files);
+                if (categoryName !== "ALL") {
+                    endpoints = endpoints.filter(ep => ep.cat.toLowerCase() === categoryName.toLowerCase());
+                }
+                endpoints.sort((a, b) => a.name.localeCompare(b.name));
+                for (let ep of endpoints) {
+                    const data = await getEndpointData(ep.path);
+                    ep.param = data.param;
+                    ep.udf = data.defaultVal;
+                }
+                window.currentEndpoints = endpoints;
+                const elapsed = Date.now() - started;
+                if (elapsed < MIN_LOADING_MS) {
+                    await new Promise(resolve => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+                }
+                renderEndpoints(endpoints);
+                const category = endpoints[0]?.cat || categoryName;
+                document.getElementById("fetching").textContent = category;
+                document.getElementById("header").textContent = category;
+            } catch (err) {
+                console.error(err);
+                const elapsed = Date.now() - started;
+                if (elapsed < MIN_LOADING_MS) {
+                    await new Promise(resolve => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+                }
+                const list = document.getElementById("api-list");
+                list.classList.remove("is-loading");
+                list.innerHTML = '<div style="text-align:center; font-size:11px; margin-top:20px;">NO HAY ENDPOINTS DISPONIBLES</div>';
+            }
+        }
+        function renderEndpoints(list) {
+            const container = document.getElementById("api-list");
+            container.classList.remove("is-loading");
+            container.innerHTML = "";
+            document.getElementById("endpoint-count").textContent = `ENDPOINTS: ${list.length}`;
+            list.forEach(ep => {
+                const item = document.createElement("div");
+                item.className = "api-item";
+                const queryStr = ep.udf ? `?${ep.param}=${encodeURIComponent(ep.udf)}` : `?${ep.param}=`;
+                const directUrl = `/api/${encodeURIComponent(ep.cat.toLowerCase())}/${encodeURIComponent(ep.name.toLowerCase())}${queryStr}`;
+                item.innerHTML = `
+                    <div class="api-info">
+                        <span class="api-name"><span class="dot"></span>${ep.name}</span>
+                        <span class="api-meta"><span class="method">GET</span> - ${ep.param}</span>
+                    </div>
+                    <a href="${directUrl}" style="text-decoration:none;">
+                       <button class="btn-action">RUN</button>
+                    </a>
+                `;
+                container.appendChild(item);
+            });
+        }
+        searchInput.addEventListener("input", e => {
+            const q = e.target.value.toLowerCase();
+            const filtered = (window.currentEndpoints || []).filter(ep =>
+                ep.name.toLowerCase().includes(q) ||
+                ep.file.toLowerCase().includes(q)
+            );
+            renderEndpoints(filtered);
+        });
+        loadEndpoints();
+    </script>
+</body>
+  </html>

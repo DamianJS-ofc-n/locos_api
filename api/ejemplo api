@@ -1,0 +1,39 @@
+// import axios from 'axios';
+
+//parámetro
+export const prm = 'query'; 
+
+//valor
+export const udf = 'gatos'; 
+
+export default async function (parametro) {
+    try {
+        if (!parametro) {
+            return {
+                status: false,
+                message: `Ingresa un valor válido. ejemplo gatos`
+            };
+        }
+
+        //scraper
+
+        const resultado = {
+            titulo: "prueba",
+            descargas: 1500,
+            link_final: parametro
+        };
+
+        return {
+            creator: 'bygp',
+            status: true,
+            data: resultado
+        };
+
+    } catch (error) {
+        console.error("Error: ", error.message);
+        return {
+            status: false,
+            message: 'Ocurrió un error al procesar la solicitud'
+        };
+    }
+}

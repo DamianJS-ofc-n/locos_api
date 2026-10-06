@@ -8,8 +8,8 @@ const router = express.Router()
 const API_DIR = path.dirname(fileURLToPath(import.meta.url))
 const ROOT_DIR = path.join(API_DIR, '..')
 
-const SAFE = /^[a-z0-9_-]+$/i               
-const ENDPOINT_FILE = /^[a-z0-9_]+-[a-z0-9_-]+\.js$/i   
+const SAFE = /^[a-z0-9_-]+$/i
+const ENDPOINT_FILE = /^[a-z0-9_]+-[a-z0-9_-]+\.js$/i
 
 const listarEndpoints = () =>
   fs.readdirSync(API_DIR).filter((f) => ENDPOINT_FILE.test(f)).sort()
@@ -37,7 +37,7 @@ router.get('/:file([a-z0-9_-]+\\.js)', (req, res) => {
 
 router.get('/:categoria/:endpoint/ui', (req, res) => {
   const rutaHtml = [path.join(API_DIR, 'ruta.html'), path.join(ROOT_DIR, 'ruta.html')]
-    .find((p) => fs.existsSync(p))
+   .find((p) => fs.existsSync(p))
   if (rutaHtml) return res.sendFile(rutaHtml)
   res.status(404).send('Archivo ruta.html no encontrado')
 })
@@ -45,20 +45,30 @@ router.get('/:categoria/:endpoint/ui', (req, res) => {
 router.get('/:categoria/:endpoint', async (req, res) => {
   try {
     const { categoria, endpoint } = req.params
-    if (!SAFE.test(categoria) || !SAFE.test(endpoint)) {
+    if (!SAFE.test(categoria) ||!SAFE.test(endpoint)) {
       return res.status(400).json({ status: false, message: 'Ruta inválida' })
     }
     const filePath = path.join(API_DIR, `${categoria}-${endpoint}.js`)
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ status: false, message: 'Endpoint no encontrado' })
+      return res.status(404).json({ status: false, message: 'Endpoint no encontrado: ' + filePath })
     }
     const modulo = await import(pathToFileURL(filePath).href + '?v=' + Date.now())
     const paramName = modulo.prm || 'query'
-    const resultado = await modulo.default(req.query[paramName])
+    const queryValue = req.query[paramName]
+
+    if (!queryValue) {
+      return res.status(400).json({ status: false, message: `Falta el parametro?${paramName}=` })
+    }
+
+    const resultado = await modulo.default(queryValue, req.query)
     res.json(resultado)
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ status: false, message: 'Error en el servidor de la API' })
+    console.error("ERROR REAL:", error)
+    res.status(500).json({
+      status: false,
+      message: error.message,
+      stack: error.stack?.split('\n').slice(0,5)
+    })
   }
 })
 

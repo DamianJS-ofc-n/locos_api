@@ -1,356 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>LOCOS Y ASOCIADOS API</title>
-      <link rel="icon" type="image/jpg" href="https://iili.io/nnBtNig.jpg">
-      <meta property="og:description" content="Api gratis - no requiere token">
-      <meta property="og:image" content="https://iili.io/K030s44.jpg">
-      <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #000;
-            --secondary: #777;
-            --bg-card: #ffffff;
-            --border: #ececec;
-            --dot-color: #d1d1d1;
-            --dot-pattern: radial-gradient(var(--dot-color) 1px, transparent 1px);
-            --sk-base: #f0f0f0;
-        }
-        body {
-            font-family: "Share Tech Mono", monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-image: var(--dot-pattern);
-            background-size: 20px 20px;
-            color: var(--primary);
-        }
-        #api-container {
-            width: 360px;
-            height: 550px;
-            padding: 25px;
-            background-color: var(--bg-card);
-            background-image: var(--dot-pattern);
-            background-size: 15px 15px;
-            border-radius: 16px;
-            border: 2px solid var(--primary);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
-        }
-        header { text-align: center; margin-bottom: 5px; }
-        #header { font-size: 26px; margin: 0; letter-spacing: 1px; text-transform: uppercase; }
-        #fetching { font-size: 10px; color: var(--secondary); text-transform: uppercase; margin-top: 4px; }
-        .description {
-            font-size: 11px;
-            margin: 10px 0 5px 0;
-            color: var(--primary);
-            line-height: 1.4;
-            text-align: center;
-       }
-        .controls-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 5px;
-            border-bottom: 1px solid var(--border);
-        }
-        .left-controls { display: flex; gap: 15px; align-items: center; }
-        .icon-btn { cursor: pointer; color: var(--primary); display: flex; align-items: center; text-decoration: none; }
-        #search-input-container { display: none; margin: 10px 0; }
-        #search-input {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 2px solid var(--primary);
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 8.5px;
-            padding: 6px 10px;
-            background: var(--primary);
-            color: #fff;
-            border-radius: 4px;
-            margin-top: 5px;
-        }
-        .stat-item { display: flex; align-items: center; }
-        .table-wrapper {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-top: 10px;
-            padding-right: 8px;
-            display: flex;
-            flex-direction: column;
-        }
-        .table-wrapper::-webkit-scrollbar { width: 4px; }
-        .table-wrapper::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-        .api-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 10px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.7);
-            margin-bottom: 5px;
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-        }
-        .api-item:hover { background: var(--primary); color: #fff; }
-        .folder-info { display: flex; align-items: center; gap: 12px; }
-        .folder-name { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
-        .folder-count { font-size: 9px; opacity: 0.6; }
-        .btn-open {
-            background: var(--primary);
-            color: #fff;
-            border: 1px solid var(--primary);
-            padding: 5px 10px;
-            font-size: 10px;
-            border-radius: 4px;
-            font-family: inherit;
-            cursor: pointer;
-        }
-        .api-item:hover .btn-open { background: #fff; color: var(--primary); }
-        .footer {
-            margin-top: 15px;
-            padding-top: 15px;
-            font-size: 10px;
-            border-top: 2px solid var(--primary);
-            text-align: center;
-            color: var(--secondary);
-        }
-        .skeleton {
-            background-color: var(--sk-base);
-            position: relative;
-            overflow: hidden;
-            border-radius: 3px;
-        }
-        .skeleton::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-            animation: shimmer 1.2s infinite;
-        }
-        @keyframes shimmer {
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        .sk-stat {
-            width: 50px;
-            height: 8px;
-            background-color: #333;
-        }
-        .sk-icon {
-            width: 20px;
-            height: 20px;
-        }
-        .sk-title {
-            width: 100px;
-            height: 12px;
-            margin-bottom: 6px;
-        }
-        .sk-sub {
-            width: 60px;
-            height: 8px;
-        }
-        .sk-btn {
-            width: 45px;
-            height: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LOCOS API - Locos y Asociados</title>
+<link rel="icon" type="image/jpg" href="https://iili.io/nnBtNig.jpg">
+<meta property="og:description" content="Locos API">
+<meta property="og:image" content="https://iili.io/K030s44.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--card:#111113;--card2:#18181b;--border:#232326;--accent:#ffd93d;--secondary:#8a8a8e;--green:#3dd68c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Space Grotesk",sans-serif;background:var(--bg);color:#fff;min-height:100vh;display:flex;justify-content:center;padding:16px;background-image:radial-gradient(circle at 15% 20%,rgba(255,217,61,.12) 0%,transparent 40%),radial-gradient(circle at 85% 80%,rgba(255,92,53,.12) 0%,transparent 40%),radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:auto,auto,22px 22px}
+#app{width:100%;max-width:420px;height:min(760px,92vh);background:var(--card);border:1.5px solid var(--border);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+.top-glow{position:absolute;top:0;left:0;right:0;height:120px;background:linear-gradient(180deg,rgba(255,217,61,.08),transparent);pointer-events:none}
+header{position:relative;z-index:2;padding:22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start}
+h1{font-family:"Share Tech Mono",monospace;font-size:28px;line-height:.9}h1 span{color:var(--accent)}
+#subtitle{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--secondary);margin-top:6px;letter-spacing:1.5px}
+.badge{font-family:"Share Tech Mono",monospace;font-size:9px;background:var(--accent);color:#000;padding:6px 10px;border-radius:20px;font-weight:700}
+.badge-dot{width:6px;height:6px;background:#000;border-radius:50%;display:inline-block;margin-right:4px;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.desc{padding:14px 22px;font-size:11px;line-height:1.5;color:var(--secondary);border-bottom:1px solid var(--border);background:var(--card2)}.desc b{color:#fff}
+.controls{display:flex;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.ctrl-btn{flex:0 0 40px;height:40px;border:1px solid var(--border);background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.search-wrap{flex:1;position:relative}
+#search-input{width:100%;height:40px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:0 14px 0 38px;font-family:"Share Tech Mono",monospace;font-size:12px;color:#fff;outline:none}
+#search-input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.4}
+.stats{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);font-family:"Share Tech Mono",monospace;font-size:9px}
+.stat{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;justify-content:space-between}.stat b{color:var(--accent)}
+.list{flex:1;overflow:auto;padding:10px;background:var(--bg)}.list::-webkit-scrollbar{width:4px}.list::-webkit-scrollbar-thumb{background:#222;border-radius:10px}
+.api-item{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;text-decoration:none;color:inherit;transition:.18s}
+.api-item:hover{border-color:#333;transform:translateY(-1px);background:var(--card2)}
+.api-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:.2s}
+.api-item:hover::before{background:var(--accent)}
+.folder{display:flex;align-items:center;gap:12px}.folder-icon{width:40px;height:40px;background:var(--card2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.folder-name{font-family:"Share Tech Mono",monospace;font-size:13px;font-weight:700}.folder-count{font-size:10px;color:var(--secondary);margin-top:2px;font-family:"Share Tech Mono",monospace}
+.btn-open{background:#fff;color:#000;padding:7px 14px;border-radius:20px;font-family:"Share Tech Mono",monospace;font-size:10px;font-weight:700}
+.footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-family:"Share Tech Mono",monospace;font-size:9px;color:var(--secondary)}
+</style>
 </head>
 <body>
-    <div id="api-container">
-        <header>
-            <h1 id="header">API GP</h1>
-            <div id="fetching">API BASICA</div>
-        </header>
-        <div class="description">
-                Aquí están las carpetas con todas las <b>APIS</b> disponible en este sitio web. <br><b>(No Requiere de Token)</b>
-        </div>
-        <div class="search-area">
-            <div class="controls-wrapper">
-                <div class="left-controls">
-                    <a href="status-api.html" class="icon-btn" title="Information">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                        </svg>
-                    </a>
-                </div>
-                <div id="search-trigger" class="icon-btn">
-                    <svg id="icon-search" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <svg id="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display: none;">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </div>
-            </div>
-            <div id="search-input-container">
-                <input type="text" id="search-input" placeholder="BUSCAR POR CATEGORIA O ENDPOINT..." autocomplete="off">
-            </div>
-        </div>
-        <div class="stats-bar">
-            <span class="stat-item">ESTADO: ONLINE</span>
-            <div style="display: flex; gap: 10px">
-                <span id="stat-routers" class="stat-item">
-                    <div class="skeleton sk-stat"></div>
-                </span>
-                <span id="stat-endpoints" class="stat-item">
-                    <div class="skeleton sk-stat"></div>
-                </span>
-            </div>
-        </div>
-        <div class="table-wrapper">
-            <div id="category-list" style="height: 100%; display: flex; flex-direction: column">
-                <div class="api-item">
-                    <div class="folder-info">
-                        <div class="skeleton sk-icon"></div>
-                        <div>
-                            <div class="skeleton sk-title"></div>
-                            <div class="skeleton sk-sub"></div>
-                        </div>
-                    </div>
-                    <div class="skeleton sk-btn"></div>
-                </div>
-            </div>
-        </div>
-        <div class="footer">© <span id="year">2026</span> | <b>BY GP</b></div>
-    </div>
-    <script>
-        document.getElementById("year").textContent = new Date().getFullYear();
-        const searchTrigger = document.getElementById("search-trigger");
-        const searchInputContainer = document.getElementById("search-input-container");
-        const iconSearch = document.getElementById("icon-search");
-        const iconClose = document.getElementById("icon-close");
-        const searchInput = document.getElementById("search-input");
-        searchTrigger.addEventListener("click", () => {
-            const isHidden = searchInputContainer.style.display === "none" || searchInputContainer.style.display === "";
-            if (isHidden) {
-                searchInputContainer.style.display = "block";
-                iconSearch.style.display = "none";
-                iconClose.style.display = "block";
-                searchInput.focus();
-            } else {
-                searchInputContainer.style.display = "none";
-                iconSearch.style.display = "block";
-                iconClose.style.display = "none";
-                searchInput.value = "";
-                filterCategories("");
-            }
-        });
-        const MIN_LOADING_MS = 1000; // tiempo minimo que se muestra el skeleton
-        async function getApiFiles() {
-            const res = await fetch("./api/", { cache: "no-store" });
-            if (!res.ok) throw new Error("No se pudo leer /api/");
-            const html = await res.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            return [...doc.querySelectorAll("a[href]")]
-                .map(a => decodeURIComponent(a.getAttribute("href")))
-                .map(href => href.split("/").pop())
-                .filter(name => /^[^/]+-[^/]+\.js$/i.test(name));
-        }
-        function parseApiFiles(files) {
-            const groups = {};
-            files.forEach(file => {
-                const name = file.replace(/\.js$/i, "");
-                const separator = name.indexOf("-");
-                if (separator < 1 || separator === name.length - 1) return;
-                const category = name.slice(0, separator).toUpperCase();
-                const endpoint = name.slice(separator + 1);
-                if (!groups[category]) groups[category] = [];
-                groups[category].push({
-                    name: endpoint.toUpperCase(),
-                    file,
-                    path: `./api/${file}`
-                });
-            });
-            return Object.entries(groups)
-                .sort(([a], [b]) => a.localeCompare(b))
-                .map(([name, endpoints]) => ({ name, endpoints }));
-        }
-        function wait(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        async function loadCategories() {
-            const started = Date.now();
-            try {
-                const files = await getApiFiles();
-                window.apiData = parseApiFiles(files);
-                const elapsed = Date.now() - started;
-                if (elapsed < MIN_LOADING_MS) {
-                    await wait(MIN_LOADING_MS - elapsed);
-                }
-                renderCategories(window.apiData);
-            } catch (err) {
-                console.error(err);
-                const elapsed = Date.now() - started;
-                if (elapsed < MIN_LOADING_MS) {
-                    await wait(MIN_LOADING_MS - elapsed);
-                }
-                document.getElementById("category-list").innerHTML = '<div style="text-align:center; font-size:11px; margin-top:20px;">NO HAY ENDPOINTS DISPONIBLES</div>';
-                document.getElementById("stat-routers").textContent = "CATEGORIAS: 0";
-                document.getElementById("stat-endpoints").textContent = "ENDPOINTS: 0";
-            }
-        }
-        function renderCategories(categories) {
-            const container = document.getElementById("category-list");
-            container.innerHTML = "";
-            let totalEndpoints = 0;
-            categories.forEach(cat => {
-                totalEndpoints += cat.endpoints.length;
-                const item = document.createElement("a");
-                item.className = "api-item";
-                item.href = `/api/${encodeURIComponent(cat.name.toLowerCase())}`;
-                item.innerHTML = `
-                    <div class="folder-info">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        <div>
-                            <div class="folder-name">${cat.name}</div>
-                            <div class="folder-count">${cat.endpoints.length} endpoint(s)</div>
-                        </div>
-                    </div>
-                    <button class="btn-open">VER</button>
-                `;
-                container.appendChild(item);
-            });
-            document.getElementById("stat-routers").textContent = `CATEGORIAS: ${categories.length}`;
-            document.getElementById("stat-endpoints").textContent = `ENDPOINTS: ${totalEndpoints}`;
-        }
-        function filterCategories(query) {
-            if (!window.apiData) return;
-            const q = query.toLowerCase();
-            const filtered = window.apiData.filter(cat =>
-                cat.name.toLowerCase().includes(q) ||
-                cat.endpoints.some(e => e.name.toLowerCase().includes(q))
-            );
-            renderCategories(filtered);
-        }
-        searchInput.addEventListener("input", e => filterCategories(e.target.value));
-        loadCategories();
-    </script>
+<div id="app">
+<div class="top-glow"></div>
+<header><div class="header-row"><div><h1>LOCOS<br><span>API</span></h1><div id="subtitle">LOCOS Y ASOCIADOS • FREE • NO TOKEN</div></div><div class="badge"><span class="badge-dot"></span>ONLINE</div></div></header>
+<div class="desc">🔥 <b id="total-desc">Cargando...</b> carpetas con endpoints libres.<br>API GRATIS PARA TODOS.</div>
+<div class="controls"><a href="status-api.html" class="ctrl-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></a><div class="search-wrap"><span class="search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-3.5-3.5"></path></svg></span><input id="search-input" type="text" placeholder="BUSCAR CATEGORIA / ENDPOINT..." autocomplete="off"></div><div id="search-trigger" class="ctrl-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"></circle><path d="M21 21l-3-3"></path></svg></div></div>
+<div class="stats"><div class="stat"><span>CATEGORIAS</span><b id="stat-routers">0</b></div><div class="stat"><span>ENDPOINTS</span><b id="stat-endpoints">0</b></div><div class="stat"><span>ESTADO</span><b style="color:var(--green)">LIVE</b></div></div>
+<div class="list"><div id="category-list"></div></div>
+<div class="footer"><span>© <span id="year">2026</span> LOCOS API</span><span>BY <b>GP</b> x LOCOS</span></div>
+</div>
+<script>
+document.getElementById("year").textContent=new Date().getFullYear();
+
+async function getApiFiles(){
+ const res=await fetch("./api/",{cache:"no-store"});
+ if(!res.ok) throw new Error("No /api/");
+ const html=await res.text();
+ const doc=new DOMParser().parseFromString(html,"text/html");
+ return [...doc.querySelectorAll("a")]
+ .map(a=>decodeURIComponent(a.getAttribute("href")))
+ .map(h=>h.split("/").pop())
+ .filter(n=>/^[^/]+-[^/]+\.js$/i.test(n));
+}
+
+// FIX REAL - este era tu bug
+function parseApiFiles(files){
+ const groups={};
+ files.forEach(file=>{
+  const clean=file.replace(/\.js$/i,"");
+  const sep=clean.indexOf("-");
+  if(sep<1) return;
+  const category=clean.slice(0,sep).toUpperCase();
+  const endpoint=clean.slice(sep+1).toUpperCase();
+  if(!groups[category]) groups[category]=[];
+  groups[category].push({name:endpoint,file,path:`./api/${file}`});
+ });
+ return Object.entries(groups)
+ .sort(([a],[b])=>a.localeCompare(b))
+ .map(([name,endpoints])=>({name,endpoints}));
+}
+
+async function loadCategories(){
+ try{
+  const files=await getApiFiles();
+  window.apiData=parseApiFiles(files);
+  renderCategories(window.apiData);
+ }catch(e){
+  console.error(e);
+  document.getElementById("category-list").innerHTML='<div style="text-align:center;padding:40px;font-family:Share Tech Mono;font-size:11px;color:#888">NO HAY ENDPOINTS<br><br>Archivos tipo<br>CATEGORIA-ENDPOINT.js</div>';
+ }
+}
+
+function renderCategories(cats){
+ const container=document.getElementById("category-list");
+ container.innerHTML="";
+ let total=0;
+ cats.forEach(cat=>{
+  total+=cat.endpoints.length;
+  const a=document.createElement("a");
+  a.className="api-item";
+  a.style.position="relative";
+  a.href=`/api/${encodeURIComponent(cat.name.toLowerCase())}`;
+  a.innerHTML=`<div class="folder"><div class="folder-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div><div><div class="folder-name">${cat.name}</div><div class="folder-count">${cat.endpoints.length} endpoint(s) • ${cat.endpoints.slice(0,2).map(e=>e.name).join(', ')}</div></div></div><div class="btn-open">VER</div>`;
+  container.appendChild(a);
+ });
+ document.getElementById("stat-routers").textContent=cats.length;
+ document.getElementById("stat-endpoints").textContent=total;
+ document.getElementById("total-desc").textContent=`${cats.length} carpetas con ${total} apis`;
+ if(cats.length===0) container.innerHTML='<div style="text-align:center;padding:30px;color:#666;font-family:Share Tech Mono">SIN RESULTADOS</div>';
+}
+
+function filterCategories(q){
+ if(!window.apiData) return;
+ const query=q.toLowerCase();
+ const filtered=window.apiData.filter(cat=>cat.name.toLowerCase().includes(query)||cat.endpoints.some(e=>e.name.toLowerCase().includes(query)));
+ renderCategories(filtered);
+}
+
+document.getElementById("search-input").addEventListener("input",e=>filterCategories(e.target.value));
+document.getElementById("search-trigger").addEventListener("click",()=>{const i=document.getElementById("search-input");i.value="";i.focus();filterCategories("");});
+loadCategories();
+</script>
 </body>
-  </html>
+</html>

@@ -1,5 +1,5 @@
 {
-  "name": "api-gp",
+  "name": "locos-api",
   "version": "3.86",
   "main": "index.js",
   "type": "module",
@@ -13,7 +13,7 @@
     "start": "node index.js"
   },
   "author": {
-    "name": "noth"
+    "name": "Damian.js"
   },
   "dependencies": {
     "adm-zip": "*",
@@ -31,12 +31,13 @@
     "jimp": "^1.6.0",
     "jsdom": "^20.0.1",
     "node-fetch": "^3.2.10",
+    "play-dl": "^1.9.7",
     "puppeteer-core": "^22.6.0",
     "ruhend-scraper": "*",
     "ws": "^8.17.1",
     "xbogus": "^1.0.2",
     "youtube-dl-exec": "*",
-    "yt-search": "^2.10.3"
+    "yt-search": "^2.12.1"
   },
   "optionalDependencies": {
     "moment-timezone": "^0.5.45"
